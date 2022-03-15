@@ -63,7 +63,7 @@
 
 <details>
 
-<summary> <b>/api</b> </summary>
+<summary> <b> /api </b> </summary> <br />
 
 **职责**
 
@@ -84,7 +84,7 @@
 
 <details>
 
-<summary> <b>/cmd</b> </summary>
+<summary> <b>/cmd</b> </summary> <br />
 
 **职责**
 
@@ -104,7 +104,7 @@
 
 <details>
 
-<summary> <b>/internal</b> </summary>
+<summary> <b>/internal</b> </summary> <br />
 
 强制增加 `/internal` package，防止其他工程随意引用。
 
@@ -117,7 +117,7 @@
 
 <details>
 
-<summary> /internal/server </summary>
+<summary> /internal/server </summary> <br />
 
 HTTP Server, gRPC Server 的定义。在这里面主要是对 Server 的生命周期进行管理，这也是很多微服务框架的主要工作之一。比如，对 HTTP Server 的优雅退出进行管理。
 
@@ -138,7 +138,7 @@ HTTP Server, gRPC Server 的定义。在这里面主要是对 Server 的生命�
 
 <details>
 
-<summary> /internal/service </summary>
+<summary> /internal/service </summary> <br />
 
 
 **调用关系**
@@ -156,7 +156,7 @@ service层 —> usecase层 中的 Usercase。
 
 <details>
 
-<summary> /internal/domain </summary>
+<summary> /internal/domain </summary> <br />
 
 保存 domain 级别的对象，其中包含：`domain object` 、 `value object` 、 `domain service` 。 按照 DDD 中的思想，Domain Object 里面包含各自负责领域的业务逻辑。
 
@@ -203,7 +203,7 @@ UI 渲染；数据库或 RPC 框架的具体实现。
 
 <details>
 
-<summary> /internal/usecase </summary>
+<summary> /internal/usecase </summary> <br />
 
 Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 domain 业务的**编排**。
 
@@ -215,7 +215,7 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
 
 <details>
 
-<summary> /internal/repo </summary>
+<summary> /internal/repo </summary> <br />
 
 **职责** 
 
@@ -231,15 +231,18 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
 
 <details>
 
-<summary> <b>/pkg</b> </summary>
-
+<summary> <b>/pkg</b> </summary> <br />
 
 里面定义可以共享出去的工具。由于是可以直接让别人用，这里面的 package 当作基础依赖库使用。既然又是基础依赖库，它里面尽可能的不包含第三方依赖。
-
 
 </details>
 
 
+<br /> 
+
+[↑ top](#contents)
+
+<hr />
 
 ## 参考资料
 
@@ -263,7 +266,7 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
 
 - https://github.com/manakuro/golang-clean-architecture - Golang 的一个 DDD 版本
 
-    > 个人觉得不好，对于实际的场景来说，太复杂！
+    > 个人觉得不好，对于实际的场景其实比较复杂，这种简单的架构看看即可，没有太大的参考价值。
 
     推荐来源： [DDD 之代码架构](https://www.yasinshaw.com/articles/112) ，该文章总结了几个重点问题：
 
