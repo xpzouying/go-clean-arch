@@ -244,6 +244,41 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
 
 <hr />
 
+
+## 数据规范
+
+在整个系统中，主要分为下列几个对象：
+
+1. DTO （Data Transfer Object）- 数据传输对象。对应的是请求、响应的结构体对象。不存在业务逻辑，可以使用 `protobuf` 来约定。
+2. DO （Domain Object）- 领域对象。包含各个领域的业务逻辑。
+3. PO （Persistant Object）- 持久对象。如果是使用 ORM 的话，那么基本上对应的是表的映射对象。该对象基本上使用贫血模型，除了简单的校验逻辑外，基本上不包含任何业务逻辑。*注意：在有的地方，该对象叫做：DO （Data Object）*。
+
+<br />
+
+**分层数据的隔离**
+
+在实际开发过程中，有的对象从 DTO 到 DO，或者从 DO 再到 PO 对象很相似，或者一摸一样，但是对应的职责实际上是完全不同，所以必须进行完全隔离。
+
+借用 [阿里技术专家详解DDD系列 第三讲 - Repository模式](https://zhuanlan.zhihu.com/p/348706530) 中的一张图，（ **注意：下图中的 DO 实际上代表的是 PO 对象** ）
+
+
+![dto_do_po_convert](./assets/dto_do_po_data_convert.png)
+
+- `DTO - DO` - 引入 `Assembler`，用作 DTO 对象的组装。
+
+- `DO - PO` - 引入 `Converter`，用作 Domain Object 的组装。
+
+为了避免大的结构体对象的赋值的繁琐工作，在做对象组装的时候，可以引入 [jinzhu/copier](https://github.com/jinzhu/copier) 的工具辅助进行组装。（ **这里一定要包含对应的单元测试！！！** ）
+
+
+
+<br /> 
+
+[↑ top](#contents)
+
+<hr />
+
+
 ## 参考资料
 
 - [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
