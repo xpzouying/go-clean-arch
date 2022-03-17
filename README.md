@@ -279,6 +279,29 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
 <hr />
 
 
+## 单元测试
+
+**Mock 工具**
+
+由于使用接口注入的方式，所以在做对应模块测试的时候，可以使用 [golang/mock](https://github.com/golang/mock) 的工具生成对应接口的 mock 实现代码。
+
+为了便于开发过程中的生成，开发了个小工具辅助生成。安装过程为：
+
+1. 安装 [golang/mock](https://github.com/golang/mock)。
+
+```bash
+go install github.com/golang/mock/mockgen@v1.6.0
+```
+
+2. 下载 `gmh`，运行下列命令即可生成。
+
+```bash
+
+# 会在当前目录下，生成 xxx_mock.go 文件。
+gmh -src my_interface.go
+```
+
+
 ## 参考资料
 
 - [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
