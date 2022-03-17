@@ -184,7 +184,7 @@ service层 —> usecase层 中的 Usercase。
 - [ddd的战术篇: application service, domain service, infrastructure service](https://blog.csdn.net/abchywabc/article/details/79362975)
 - [阿里技术专家详解 DDD 系列 第五讲：聊聊如何避免写流水账代码](https://zhuanlan.zhihu.com/p/366395817)
 
-- **不包含**
+**不包含**
 
 UI 渲染；数据库或 RPC 框架的具体实现。
 
