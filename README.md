@@ -320,3 +320,5 @@ Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 doma
     > 首先对于数据的职责定义还是需要做区分，比如需要分成： `DTO`、 `Domain Object` 、 `PO` 等数据类型，因为每个数据类型承担的职责起码就不一样。
     > 而文中直接定义的 `model` 就很类似于传统 `MVC` 的那一套，而 Bob 大叔在他的书里面就明确说了这是两套方法论。
     > 另外，Bob 大叔也说了，很多对象看着是类似或者一样，但是其实是两个东西。
+
+- [一篇文章讲清楚VO，BO，PO，DO，DTO的区别](https://zhuanlan.zhihu.com/p/102389552)
