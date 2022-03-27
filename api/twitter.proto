@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = ".;api";
+
+message GetUserReq {
+  uint32 user_id = 1;
+}
+
+message GetUserReply {
+  uint32 user_id = 1;
+  string name = 2;
+  string avatar = 3;
+}
+
+message CreateUserReq {
+  string username = 1;
+  string avatar_url = 2;
+}
+
+message CreateUserReply {
+  uint32 user_id = 1;
+}

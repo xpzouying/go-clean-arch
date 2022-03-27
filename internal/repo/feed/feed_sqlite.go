@@ -17,14 +17,19 @@ const (
 	StatusNormal
 )
 
+// feedPO is ORM object for feed
 type feedPO struct {
 	ID     int    `gorm:"column:id;primaryKey;autoIncrement"`
 	UID    int    `gorm:"column:uid;index"`
 	Text   string `gorm:"column:text"`
 	Status Status `gorm:"column:status"`
 
-	Crtime time.Time `gorm:"column:crtime"`
-	Uptime time.Time `gorm:"column:uptime"`
+	Crtime time.Time `gorm:"column:crtime;autoCreateTime"`
+	Uptime time.Time `gorm:"column:uptime;autoUpdateTime"`
+}
+
+func (feedPO) TableName() string {
+	return "feed"
 }
 
 type feedRepo struct {
@@ -32,6 +37,7 @@ type feedRepo struct {
 }
 
 func NewFeedRepo(db *gorm.DB) feed.FeedRepo {
+	_ = db.AutoMigrate(&feedPO{})
 
 	return &feedRepo{db: db}
 }
