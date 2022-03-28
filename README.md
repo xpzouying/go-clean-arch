@@ -58,12 +58,11 @@
 
 代码的目录结构参考了 [github.com/go-kit/kit](https://github.com/go-kit/kit)、[github.com/go-kratos/kratos](https://github.com/go-kratos/kratos)、[github.com/golang-standards/project-layout](https://github.com/golang-standards/project-layout) 等工程的代码结构思想，提出下列规范：
 
-
 从根目录，开始分为：
 
-<details>
 
-<summary> <b> /api </b> </summary> <br />
+
+### /api
 
 **职责**
 
@@ -79,12 +78,13 @@
 
 - HTTP 请求和响应的序列化是否符合预期
 
-</details>
 
 
-<details>
+<br />
 
-<summary> <b>/cmd</b> </summary> <br />
+
+
+###  /cmd
 
 **职责**
 
@@ -95,16 +95,13 @@
     - 要用**显示的**方式将依赖注入。
   - 每次依赖注入都会非常麻烦。可以借用 [wire](https://pkg.go.dev/github.com/google/wire) 工具生成依赖注入的代码。
 
-**如何测试**
-
-不做测试。
-
-</details>
 
 
-<details>
+<br />
 
-<summary> <b>/internal</b> </summary> <br />
+
+
+### /internal
 
 强制增加 `/internal` package，防止其他工程随意引用。
 
@@ -113,129 +110,28 @@
 
 <br />
 
-在这下面会存在如下目录，
-
-<details>
-
-<summary> /internal/server </summary> <br />
-
-HTTP Server, gRPC Server 的定义。在这里面主要是对 Server 的生命周期进行管理，这也是很多微服务框架的主要工作之一。比如，对 HTTP Server 的优雅退出进行管理。
+在这下面可以创建子目录，
 
 
-**职责**
 
-- 创建 HTTP Server，**管理 HTTP Server 的生命周期**，包括优雅退出的策略。 ( **重点** )
-- ( 类似于 gRPC ) 使用 Register 的方式将 Server 注入到 /api 中，绑定 Server 与 http router 的关系。
-
-
-**测试** 
-
-暂时不需要测试。
-
-
-</details>
+| 子目录                | 职责                                                         | 备注                                                         |
+| --------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **/internal/server**  | HTTP Server, gRPC Server 的定义。在这里面主要是对 Server 的生命周期进行管理，这也是很多微服务框架的主要工作之一。比如，对 HTTP Server 的优雅退出进行管理。<br /> | 1、创建 HTTP Server，**管理 HTTP Server 的生命周期**，包括优雅退出的策略。2、 ( **重点** ) ( 类似于 gRPC ) 使用 Register 的方式将 Server 注入到 /api 中，绑定 Server 与 http router 的关系。 |
+| **/internal/service** | 1、**重点：参数转换**，并做简单的参数校验。 2、做业务数据的渲染。 ( 由于没有 BFF，所以将 BFF 的功能放到这一层做，但是会导致这一层的代码膨胀 ) | service层 --> usecase层 中的 Usercase。                      |
+| **/internal/domain**  | 保存 domain 级别的对象，其中包含：`domain object` 、 `value object` 、 `domain service` 。 按照 DDD 中的思想，Domain Object 里面包含各自负责领域的业务逻辑。 | 1、**这一层是业务的核心层级。**<br />2、这一层按照现在的分层模式，非常独立，不会向上依赖，也不会向下依赖。<br />3、这一层的对象是 `Domain Object`，需要与 `PO (Persistence Object)` 或者叫 `Data Object` 区分。<br />4、`Domain Object` 是带有对应的业务逻辑， `PO` 只是做个表的简单映射，如果是使用 ORM 工具的话，那么就对应 ORM 映射的对象。<br />5、在这一层下面，可以按照业务的子领域创建各自的 package。<br />6、按照 DDD 的设计思想，本层使用 `充血模型`。<br />7、如何更好的设计领域对象 ( Domain Object ) 强烈推荐参考：[ddd的战术篇: application service, domain service, infrastructure service](https://blog.csdn.net/abchywabc/article/details/79362975) 、 [阿里技术专家详解 DDD 系列 第五讲：聊聊如何避免写流水账代码](https://zhuanlan.zhihu.com/p/366395817)<br />8、「不包含」UI 渲染，也「不包含」数据库或 RPC 框架的具体实现。<br />9、repo 的依赖，由于是 interface 注入，所以直接 mock 的方式。 ( 可以引入 Go 官方的 [gomock](https://pkg.go.dev/github.com/golang/mock/gomock) )<br /><br />本层的难点：如何定义各种各样的 `Domain Object`、`Domain Service`。 |
+| **/internal/usecase** | Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 domain 业务的**编排**。<br />若有必要，也可以在该 package 下面定义 `子 Usecase`。 |                                                              |
+| **/internal/repo**    | 各种数据依赖的具体实现，包括 DB、RPC、缓存等。这里面存放 PO 数据，这些数据就是 **简单的表映射**。 | 这里的对象使用 `失血模型` 或者 `贫血模型`。                  |
 
 
-<details>
 
-<summary> /internal/service </summary> <br />
-
-
-**调用关系**
-
-service层 —> usecase层 中的 Usercase。
-
-**主要职责**
-
-- **重点：参数转换**，并做简单的参数校验。
-- 做业务数据的渲染。 ( 由于没有 BFF，所以将 BFF 的功能放到这一层做，但是会导致这一层的代码膨胀 )
+<br />
 
 
-</details>
 
-
-<details>
-
-<summary> /internal/domain </summary> <br />
-
-保存 domain 级别的对象，其中包含：`domain object` 、 `value object` 、 `domain service` 。 按照 DDD 中的思想，Domain Object 里面包含各自负责领域的业务逻辑。
-
-**这一层是业务的核心层级。**
-
-这一层按照现在的分层模式，非常独立，不会向上依赖，也不会向下依赖。
-
-这一层的对象是 `Domain Object`，需要与 `PO (Persistence Object)` 或者叫 `Data Object` 区分。
-
-`Domain Object` 是带有对应的业务逻辑，
-`PO` 只是做个表的简单映射，如果是使用 ORM 工具的话，那么就对应 ORM 映射的对象。
-
-在这一层下面，可以按照业务的子域创建各自的 package。比如：
-
-- /internal/domain/user
-- /internal/domain/booking
-
-**职责**
-
-- 各自领域具体的业务逻辑。
-- 使用充血模式。
-
-如何更好的设计领域对象 ( Domain Object ) 强烈推荐参考：
-
-- [ddd的战术篇: application service, domain service, infrastructure service](https://blog.csdn.net/abchywabc/article/details/79362975)
-- [阿里技术专家详解 DDD 系列 第五讲：聊聊如何避免写流水账代码](https://zhuanlan.zhihu.com/p/366395817)
-
-**不包含**
-
-UI 渲染；数据库或 RPC 框架的具体实现。
-
-
-**测试**
-
-- repo 的依赖，由于是 interface 注入，所以直接 mock 的方式。 ( 后续会引入 Go 官方的 [gomock](https://pkg.go.dev/github.com/golang/mock/gomock) )
--   测试重点为业务逻辑是否符合预期。
-
-**难点**
-
-这一层的难点是，如何定义各种各样的 `Domain Object`、`Domain Service`。
-
-</details>
-
-
-<details>
-
-<summary> /internal/usecase </summary> <br />
-
-Use Cases，即 DDD 中的 `Application Service`，它主要的作用是对 domain 业务的**编排**。
-
-若有必要，也可以在该 package 下面定义 `子 Usecase`。
-
-
-</details>
-
-
-<details>
-
-<summary> /internal/repo </summary> <br />
-
-**职责** 
-
-各种数据依赖的具体实现，包括 DB、RPC、缓存等。这里面存放 PO 数据，这些数据就是 **简单的表映射**。
-
-这里的对象使用 `失血模型` 或者 `贫血模型`。
-
-</details>
-
-
-</details>
-
-
-<details>
-
-<summary> <b>/pkg</b> </summary> <br />
+### /pkg
 
 里面定义可以共享出去的工具。由于是可以直接让别人用，这里面的 package 当作基础依赖库使用。既然又是基础依赖库，它里面尽可能的不包含第三方依赖。
 
-</details>
 
 
 <br /> 
