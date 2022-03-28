@@ -13,6 +13,7 @@ type TwitterService interface {
 
 	CreateFeed(ctx context.Context, req *CreateFeedReq) (*CreateFeedReply, error)
 	DeleteFeed(ctx context.Context, req *DeleteFeedReq) error
+	ListFeeds(ctx context.Context) (*ListFeedReply, error)
 }
 
 func RegisterTwitterHTTPServer(h *http.ServeMux, svc TwitterService) {
@@ -22,6 +23,7 @@ func RegisterTwitterHTTPServer(h *http.ServeMux, svc TwitterService) {
 
 	h.HandleFunc("/create-feed", makeCreateFeed(svc))
 	h.HandleFunc("/delete-feed", makeDeleteFeed(svc))
+	h.HandleFunc("/list-feeds", makeListFeed(svc))
 }
 
 func encodeResponse(w http.ResponseWriter, in interface{}) {

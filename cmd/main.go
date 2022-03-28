@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/xpzouying/go-clean-arch/api"
+	twitterdo "github.com/xpzouying/go-clean-arch/internal/domain/twitter"
 	"github.com/xpzouying/go-clean-arch/internal/repo/feed"
 	"github.com/xpzouying/go-clean-arch/internal/repo/user"
 	"github.com/xpzouying/go-clean-arch/internal/service"
@@ -22,7 +23,8 @@ func main() {
 
 	userRepo := user.NewUserRepo(db)
 	feedRepo := feed.NewFeedRepo(db)
-	twitterUC := twitter.NewTwitter(userRepo, feedRepo)
+	twitterDomain := twitterdo.NewTwitterService(feedRepo, userRepo)
+	twitterUC := twitter.NewTwitter(twitterDomain)
 
 	twitterSvc := service.NewTwitterService(twitterUC)
 

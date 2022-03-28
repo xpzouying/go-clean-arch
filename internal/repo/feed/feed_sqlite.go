@@ -42,11 +42,30 @@ func NewFeedRepo(db *gorm.DB) feed.FeedRepo {
 	return &feedRepo{db: db}
 }
 
+func (rp *feedRepo) ListFeeds(ctx context.Context) ([]feed.Feed, error) {
+
+	var records []feedPO
+	if err := rp.db.WithContext(ctx).
+		Where("status = ?", StatusNormal).
+		Order("crtime desc").
+		Find(&records).Error; err != nil {
+		return nil, err
+	}
+
+	feeds := make([]feed.Feed, 0, len(records))
+	for _, r := range records {
+		f := rp.assemble(r)
+		feeds = append(feeds, f)
+	}
+	return feeds, nil
+}
+
 func (rp *feedRepo) CreateFeed(ctx context.Context, uid int, text string) (int, error) {
 
 	r := feedPO{
-		UID:  uid,
-		Text: text,
+		UID:    uid,
+		Text:   text,
+		Status: StatusNormal,
 	}
 	err := rp.db.WithContext(ctx).Create(&r).Error
 
@@ -68,11 +87,8 @@ func (rp *feedRepo) GetFeed(ctx context.Context, fid int) (*feed.Feed, error) {
 		return nil, err
 	}
 
-	return &feed.Feed{
-		FeedID:   r.ID,
-		AuthorID: r.UID,
-		Text:     r.Text,
-	}, nil
+	f := rp.assemble(r)
+	return &f, nil
 }
 
 func (rp *feedRepo) DeleteFeed(ctx context.Context, uid int, fid int) error {
@@ -82,4 +98,12 @@ func (rp *feedRepo) DeleteFeed(ctx context.Context, uid int, fid int) error {
 		Where("uid = ?", uid).
 		Where("id = ?", fid).
 		Update("status", StatusDelete).Error
+}
+
+func (rp *feedRepo) assemble(record feedPO) feed.Feed {
+	return feed.Feed{
+		FeedID:   record.ID,
+		AuthorID: record.UID,
+		Text:     record.Text,
+	}
 }

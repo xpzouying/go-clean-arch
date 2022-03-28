@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -48,18 +47,38 @@ func (rp *userRepo) CreateUser(ctx context.Context, name, avatar string) (int, e
 	return u.ID, nil
 }
 
-func (rp *userRepo) GetUser(ctx context.Context, uid int) (*user.User, error) {
-	var u userPO
+func (rp *userRepo) GetUser(ctx context.Context, uid int) (user.User, error) {
+
+	users, err := rp.FindUsers(ctx, []int{uid})
+	if err != nil {
+		return user.User{}, err
+	}
+
+	u, ok := users[uid]
+	if !ok {
+		return user.User{}, user.ErrUserNotExists
+	}
+
+	return u, nil
+}
+
+func (rp *userRepo) FindUsers(ctx context.Context, uid []int) (map[int]user.User, error) {
+	var records []userPO
 	err := rp.db.WithContext(ctx).
-		Where("id = ?", uid).
-		Take(&u).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+		Where("id IN ?", uid).
+		Find(&records).Error
+	if err != nil {
 		return nil, err
 	}
 
-	return &user.User{
-		Uid:    u.ID,
-		Name:   u.Name,
-		Avatar: u.Avatar,
-	}, nil
+	users := make(map[int]user.User, len(records))
+	for _, r := range records {
+
+		users[r.ID] = user.User{
+			Uid:    r.ID,
+			Name:   r.Name,
+			Avatar: r.Avatar,
+		}
+	}
+	return users, nil
 }

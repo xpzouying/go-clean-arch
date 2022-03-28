@@ -2,38 +2,20 @@ package twitter
 
 import (
 	"context"
+
+	"github.com/xpzouying/go-clean-arch/internal/domain/twitter"
 )
 
-type FeedInfo struct {
-	FeedID int
-	Text   string
+func (t *Twitter) ListFeeds(ctx context.Context) ([]twitter.CardInfo, error) {
 
-	AuthorID     int
-	AuthorName   string
-	AuthorAvatar string
+	return t.twitterService.ListFeeds(ctx)
 }
 
-func (t *Twitter) CreateFeed(ctx context.Context, uid int, text string) (*FeedInfo, error) {
-	u, err := t.userRepo.GetUser(ctx, uid)
-	if err != nil {
-		return nil, err
-	}
-
-	fid, err := t.feedRepo.CreateFeed(ctx, uid, text)
-	if err != nil {
-		return nil, err
-	}
-
-	return &FeedInfo{
-		FeedID:       fid,
-		Text:         text,
-		AuthorID:     uid,
-		AuthorName:   u.Name,
-		AuthorAvatar: u.Avatar,
-	}, nil
+func (t *Twitter) CreateFeed(ctx context.Context, uid int, text string) (*twitter.CardInfo, error) {
+	return t.twitterService.CreateFeed(ctx, uid, text)
 }
 
 func (t *Twitter) DeleteFeed(ctx context.Context, uid, feedID int) error {
 
-	return t.feedRepo.DeleteFeed(ctx, uid, feedID)
+	return t.twitterService.DeleteFeed(ctx, uid, feedID)
 }

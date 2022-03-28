@@ -37,13 +37,7 @@ func makeGetUser(svc TwitterService) http.HandlerFunc {
 			return
 		}
 
-		resp := &GetUserReply{
-			UID:    result.UID,
-			Name:   result.Name,
-			Avatar: result.Avatar,
-		}
-
-		encodeResponse(w, resp)
+		encodeResponse(w, result)
 	}
 }
 
@@ -59,8 +53,6 @@ func makeCreateUser(svc TwitterService) http.HandlerFunc {
 			return
 		}
 
-		resp := &CreateUserReply{UID: result.UID}
-
-		encodeResponse(w, resp)
+		encodeResponse(w, result)
 	}
 }
