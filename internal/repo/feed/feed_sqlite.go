@@ -78,6 +78,7 @@ func (rp *feedRepo) GetFeed(ctx context.Context, fid int) (*feed.Feed, error) {
 func (rp *feedRepo) DeleteFeed(ctx context.Context, uid int, fid int) error {
 
 	return rp.db.WithContext(ctx).
+		Model(&feedPO{}).
 		Where("uid = ?", uid).
 		Where("id = ?", fid).
 		Update("status", StatusDelete).Error

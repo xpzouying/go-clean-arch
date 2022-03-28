@@ -13,19 +13,18 @@ type FeedInfo struct {
 	AuthorAvatar string
 }
 
-func (t *Twitter) CreateFeed(ctx context.Context, uid int, text string) (FeedInfo, error) {
+func (t *Twitter) CreateFeed(ctx context.Context, uid int, text string) (*FeedInfo, error) {
+	u, err := t.userRepo.GetUser(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
 
 	fid, err := t.feedRepo.CreateFeed(ctx, uid, text)
 	if err != nil {
-		return FeedInfo{}, err
+		return nil, err
 	}
 
-	u, err := t.userRepo.GetUser(ctx, uid)
-	if err != nil {
-		return FeedInfo{}, err
-	}
-
-	return FeedInfo{
+	return &FeedInfo{
 		FeedID:       fid,
 		Text:         text,
 		AuthorID:     uid,
