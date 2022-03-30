@@ -197,6 +197,35 @@ go install github.com/golang/mock/mockgen@v1.6.0
 gmh -src my_interface.go
 ```
 
+[↑ top](#contents)
+
+<br /> <hr />
+
+## 依赖注入
+
+使用 [github.com/google/wire](https://github.com/google/wire) 帮助生成代码，完成依赖注入。
+
+**安装**
+
+```bash
+go get github.com/google/wire/cmd/wire
+```
+
+**使用**
+
+进入 `cmd/` 目录，运行：
+
+```bash
+wire
+# wire: github.com/xpzouying/go-clean-arch/cmd: wrote /Users/zy/src/zy/go-clean-arch/cmd/wire_gen.go
+```
+
+`wire` 会根据 `wire.go` 中的定义，自动生成 `wire_gen.go` 代码。
+
+
+[↑ top](#contents)
+
+<br /> <hr />
 
 ## 参考资料
 
