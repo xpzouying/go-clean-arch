@@ -177,7 +177,7 @@
 
 ## 单元测试
 
-**Mock 工具**
+**Mock 工具 - mock**
 
 由于使用接口注入的方式，所以在做对应模块测试的时候，可以使用 [golang/mock](https://github.com/golang/mock) 的工具生成对应接口的 mock 实现代码。
 
@@ -196,6 +196,11 @@ go install github.com/golang/mock/mockgen@v1.6.0
 # 会在当前目录下，生成 xxx_mock.go 文件。
 gmh -src my_interface.go
 ```
+
+**Mock工具 - mockery**
+
+[mockery](https://github.com/vektra/mockery) 配合 stretchr/testify/mock 使用，自动生成测试代码。
+
 
 [↑ top](#contents)
 
